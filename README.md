@@ -69,6 +69,17 @@ Since this is a client-side static web application, it can be hosted directly on
 
 ---
 
+## Future Enhancements & Advanced Real-World Features
+
+To transition this basic resume builder into an advanced career assistance portal, the following features are on the roadmap:
+
+*   **ATS Compatibility Score Checker**: Implement a local semantic scanner to cross-check resumes against target job descriptions, flagging keyword matches, formatting warnings, and layout compliance.
+    *   *Real-Life Example*: A candidate receives a warning "Missing Core Skills matches for Node.js developer" and modifies their details before exporting the PDF.
+*   **Targeted Multiple Profile Management**: Allow users to save multiple resume variants (e.g. Frontend Developer, Backend Developer, Project Manager) inside their local storage and select sections to export.
+    *   *Real-Life Example*: A developer toggles off secondary projects and selects a focused "Backend Intern" variant for a specific role application.
+*   **Custom Styling Themes**: Offer a selection of clean, professional layout templates (e.g. academic CV, minimalist developer, executive) without violating standard PDF margins.
+    *   *Real-Life Example*: A student switches from a compact single-column format to a two-column academic template for research internships.
+
 ## Submission Details
 *   **Developer**: Phulkeshwar Mahto
 *   **Email**: [phulkeshwarmahto@gmail.com](mailto:phulkeshwarmahto@gmail.com)
