@@ -487,7 +487,7 @@ export default function App() {
       {/* HEADER */}
       <header>
         <div className="logo">
-          <span className="logo-icon">📝</span>
+          <img src="/favicon-96x96.png" alt="Logo" style={{ width: '24px', height: '24px', borderRadius: '4px' }} />
           <span>ATS Resume Builder</span>
           <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: 'var(--accent)', color: 'var(--bg)', borderRadius: '4px', marginLeft: '6px', fontWeight: 'bold' }}>PRO</span>
         </div>
