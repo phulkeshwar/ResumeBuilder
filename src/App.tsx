@@ -66,13 +66,13 @@ const DEFAULT_STATE: ResumeState = {
 
 const SAMPLE_DATA: ResumeState = {
   fullName: 'Phulkeshwar Mahto',
-  jobTitle: 'Full Stack Developer',
+  jobTitle: 'Full Stack Engineer',
   email: 'phulkeshwarmahto@gmail.com',
   phone: '+91-9988776655',
   location: 'Ranchi, Jharkhand',
   linkedin: 'linkedin.com/in/phulkeshwarmahto',
   github: 'github.com/phulkeshwarmahto',
-  summary: 'B.Tech Computer Engineering student at NIAMT Ranchi with hands-on experience in MERN stack development. Built production-grade apps including a WebRTC calling platform, AI health assistant, and disaster relief coordination system. Open-source contributor (GSSoC 2026) and founder of Garam Softwares.',
+  summary: 'B.Tech Computer Engineering student at NIAMT Ranchi with hands-on experience in MERN stack development. Built production-grade apps including a WebRTC calling platform, AI health assistant, and disaster relief coordination system. Open-source contributor and founder of Garam Softwares.',
   skills: 'React, Node.js, Express, MongoDB, PostgreSQL, Socket.IO, Redis, Tailwind CSS, JavaScript, C++, Git',
   experience: [
     {
@@ -112,37 +112,112 @@ const SAMPLE_DATA: ResumeState = {
 };
 
 export default function App() {
-  // Main State
+  // 1. MULTIPLE PROFILE STORAGE SYSTEM
+  const [profiles, setProfiles] = useState<{ [name: string]: ResumeState }>({
+    'Default': DEFAULT_STATE
+  });
+  const [currentProfileName, setCurrentProfileName] = useState<string>('Default');
+  const [newProfileName, setNewProfileName] = useState<string>('');
+
+  // Local state copy representing the active form inputs
   const [state, setState] = useState<ResumeState>(DEFAULT_STATE);
 
-  // Load from LocalStorage on mount
+  // 2. STYLING VARIANTS STATE
+  const [fontTheme, setFontTheme] = useState<'serif' | 'sans' | 'mono'>('serif');
+  const [spacing, setSpacing] = useState<'compact' | 'normal' | 'spacious'>('normal');
+
+  // Load profiles from LocalStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('resume_builder_data');
-    if (saved) {
+    const savedProfiles = localStorage.getItem('resume_profiles_list');
+    const savedActiveName = localStorage.getItem('resume_active_profile_name');
+    
+    if (savedProfiles) {
       try {
-        setState(JSON.parse(saved));
+        const parsed = JSON.parse(savedProfiles);
+        setProfiles(parsed);
+        const activeName = savedActiveName || Object.keys(parsed)[0] || 'Default';
+        setCurrentProfileName(activeName);
+        if (parsed[activeName]) {
+          setState(parsed[activeName]);
+        }
       } catch (e) {
-        // ignore
+        // Fallback
+        setProfiles({ 'Default': DEFAULT_STATE });
+        setState(DEFAULT_STATE);
       }
+    } else {
+      // Re-initialize with sample data to start beautifully
+      const initialProfiles = { 'Default': SAMPLE_DATA };
+      setProfiles(initialProfiles);
+      setState(SAMPLE_DATA);
+      localStorage.setItem('resume_profiles_list', JSON.stringify(initialProfiles));
+      localStorage.setItem('resume_active_profile_name', 'Default');
     }
   }, []);
 
-  // Save to LocalStorage on every change
+  // Update profile in list when local state changes
   useEffect(() => {
-    if (state !== DEFAULT_STATE) {
-      localStorage.setItem('resume_builder_data', JSON.stringify(state));
+    if (currentProfileName) {
+      setProfiles(prev => {
+        const updated = { ...prev, [currentProfileName]: state };
+        localStorage.setItem('resume_profiles_list', JSON.stringify(updated));
+        return updated;
+      });
     }
-  }, [state]);
+  }, [state, currentProfileName]);
+
+  // Create new profile
+  const handleCreateProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = newProfileName.trim();
+    if (!name) return;
+    if (profiles[name]) {
+      alert('Profile name already exists');
+      return;
+    }
+    const updated = { ...profiles, [name]: DEFAULT_STATE };
+    setProfiles(updated);
+    setCurrentProfileName(name);
+    setState(DEFAULT_STATE);
+    setNewProfileName('');
+    localStorage.setItem('resume_profiles_list', JSON.stringify(updated));
+    localStorage.setItem('resume_active_profile_name', name);
+  };
+
+  // Delete profile
+  const handleDeleteProfile = () => {
+    if (Object.keys(profiles).length <= 1) {
+      alert('Cannot delete the last remaining profile');
+      return;
+    }
+    const remainingNames = Object.keys(profiles).filter(name => name !== currentProfileName);
+    const updated = { ...profiles };
+    delete updated[currentProfileName];
+    
+    setProfiles(updated);
+    const nextProfile = remainingNames[0];
+    setCurrentProfileName(nextProfile);
+    setState(updated[nextProfile]);
+    localStorage.setItem('resume_profiles_list', JSON.stringify(updated));
+    localStorage.setItem('resume_active_profile_name', nextProfile);
+  };
+
+  // Switch profiles
+  const handleProfileSwitch = (name: string) => {
+    setCurrentProfileName(name);
+    setState(profiles[name] || DEFAULT_STATE);
+    localStorage.setItem('resume_active_profile_name', name);
+  };
 
   // General field handlers
   const handleFieldChange = (key: keyof ResumeState, value: string) => {
     setState((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Experince item handlers
+  // Experience handlers
   const handleAddExperience = () => {
     const newEntry: ExperienceEntry = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 9),
       company: '',
       role: '',
       duration: '',
@@ -170,7 +245,7 @@ export default function App() {
   // Education handlers
   const handleAddEducation = () => {
     const newEntry: EducationEntry = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 9),
       institution: '',
       degree: '',
       year: '',
@@ -198,7 +273,7 @@ export default function App() {
   // Project handlers
   const handleAddProject = () => {
     const newEntry: ProjectEntry = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 9),
       name: '',
       tech: '',
       description: '',
@@ -226,7 +301,7 @@ export default function App() {
   // Certification handlers
   const handleAddCertification = () => {
     const newEntry: CertificationEntry = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 9),
       name: '',
       issuer: '',
       year: '',
@@ -258,12 +333,6 @@ export default function App() {
   // Clear Form State
   const handleClearAll = () => {
     setState(DEFAULT_STATE);
-    localStorage.removeItem('resume_builder_data');
-  };
-
-  // Trigger Print PDF
-  const handleDownloadPDF = () => {
-    window.print();
   };
 
   // Utility to split descriptions into bullet points based on newline
@@ -285,6 +354,60 @@ export default function App() {
     ? state.skills.split(',').map((s) => s.trim()).filter((s) => s !== '')
     : [];
 
+  // 3. ATS SCORING LOGIC
+  const checkATS = () => {
+    let score = 0;
+    const itemsList: Array<{ text: string; passed: boolean; weight: number }> = [];
+
+    const hasName = !!state.fullName.trim();
+    itemsList.push({ text: 'Full Name provided', passed: hasName, weight: 10 });
+
+    const hasTitle = !!state.jobTitle.trim();
+    itemsList.push({ text: 'Job Title targeted', passed: hasTitle, weight: 10 });
+
+    const hasEmail = !!state.email.trim();
+    itemsList.push({ text: 'Email Address provided', passed: hasEmail, weight: 10 });
+
+    const hasPhone = !!state.phone.trim();
+    itemsList.push({ text: 'Phone Number provided', passed: hasPhone, weight: 10 });
+
+    const hasLocation = !!state.location.trim();
+    itemsList.push({ text: 'Location (City, State) included', passed: hasLocation, weight: 10 });
+
+    const sumLen = state.summary.trim().length;
+    const sumOk = sumLen >= 200 && sumLen <= 600;
+    itemsList.push({ text: 'Summary length (200-600 characters)', passed: sumOk, weight: 15 });
+
+    const skillCount = state.skills.split(',').map(s => s.trim()).filter(Boolean).length;
+    const skillsOk = skillCount >= 5;
+    itemsList.push({ text: 'Includes 5+ core skills keywords', passed: skillsOk, weight: 15 });
+
+    const expCount = state.experience.length;
+    const expOk = expCount >= 1;
+    itemsList.push({ text: 'Minimum 1 professional work experience', passed: expOk, weight: 10 });
+
+    let bulletsOk = false;
+    if (expCount > 0) {
+      bulletsOk = state.experience.every(exp => {
+        const bulletCount = exp.description.split('\n').filter(line => line.trim().length > 5).length;
+        return bulletCount >= 2;
+      });
+    }
+    itemsList.push({ text: 'Detailed bullet points in job description', passed: bulletsOk, weight: 10 });
+
+    let totalWeight = 0;
+    let earnedWeight = 0;
+    itemsList.forEach(it => {
+      totalWeight += it.weight;
+      if (it.passed) earnedWeight += it.weight;
+    });
+
+    score = Math.round((earnedWeight / totalWeight) * 100);
+    return { score, items: itemsList };
+  };
+
+  const { score: atsScore, items: atsChecks } = checkATS();
+
   return (
     <>
       {/* HEADER */}
@@ -292,6 +415,7 @@ export default function App() {
         <div className="logo">
           <span className="logo-icon">📝</span>
           <span>ATS Resume Builder</span>
+          <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: 'var(--accent)', color: 'var(--bg)', borderRadius: '4px', marginLeft: '6px', fontWeight: 'bold' }}>PRO</span>
         </div>
         <div className="author-chip">
           By <strong>Phulkeshwar Mahto</strong> &nbsp;·&nbsp;
@@ -304,8 +428,100 @@ export default function App() {
         
         {/* LEFT COLUMN: SIDEBAR FORM PANEL */}
         <aside className="sidebar-panel">
-          <div className="form-header-row">
-            <h2 className="form-title">Resume Form</h2>
+          
+          {/* Multiple Profile Switcher Widget */}
+          <div className="profile-switcher">
+            <h3 className="section-title" style={{ border: 'none', padding: 0, marginBottom: '8px' }}>Resume Profiles</h3>
+            <div className="profile-select-row">
+              <select 
+                value={currentProfileName} 
+                onChange={(e) => handleProfileSwitch(e.target.value)}
+              >
+                {Object.keys(profiles).map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <button type="button" className="btn-sec" style={{ padding: '6px 10px', fontSize: '0.78rem', color: '#EF4444', borderColor: '#EF4444' }} onClick={handleDeleteProfile}>
+                Delete
+              </button>
+            </div>
+            <form onSubmit={handleCreateProfile} className="profile-actions">
+              <input
+                type="text"
+                placeholder="New Variant Name..."
+                value={newProfileName}
+                onChange={(e) => setNewProfileName(e.target.value)}
+              />
+              <button type="submit" className="btn-sec" style={{ padding: '6px 10px', fontSize: '0.78rem' }}>
+                + Create
+              </button>
+            </form>
+          </div>
+
+          {/* ATS Score Check Widget */}
+          <div className="ats-widget">
+            <div className="ats-score-row">
+              <span className="ats-score-title">ATS Check Score</span>
+              <span className="ats-score-badge">{atsScore}/100</span>
+            </div>
+            <div className="ats-bar-container">
+              <div 
+                className="ats-bar" 
+                style={{ 
+                  width: `${atsScore}%`, 
+                  background: atsScore > 80 ? 'var(--accent)' : atsScore >= 50 ? 'var(--text-bright)' : '#EF4444' 
+                }}
+              ></div>
+            </div>
+            <div className="ats-suggestions">
+              {atsChecks.map((check, idx) => (
+                <div 
+                  key={idx} 
+                  className={`ats-item ${!check.passed ? 'critical' : ''}`}
+                >
+                  <span>{check.passed ? '✓' : '✗'}</span>
+                  <span>{check.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Typography Theme & Margins Row */}
+          <div className="section-card" style={{ padding: '16px' }}>
+            <h3 className="section-title" style={{ border: 'none', padding: 0, marginBottom: '10px' }}>Layout Config</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="field" style={{ marginBottom: 0 }}>
+                <label htmlFor="themeSelect">Typography</label>
+                <select
+                  id="themeSelect"
+                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text-bright)', borderRadius: '6px', padding: '6px', fontSize: '0.8rem', width: '100%' }}
+                  value={fontTheme}
+                  onChange={(e) => setFontTheme(e.target.value as any)}
+                >
+                  <option value="serif">Georgia Serif</option>
+                  <option value="sans">Inter Sans</option>
+                  <option value="mono">Courier Mono</option>
+                </select>
+              </div>
+
+              <div className="field" style={{ marginBottom: 0 }}>
+                <label htmlFor="spacingSelect">Spacing Layout</label>
+                <select
+                  id="spacingSelect"
+                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text-bright)', borderRadius: '6px', padding: '6px', fontSize: '0.8rem', width: '100%' }}
+                  value={spacing}
+                  onChange={(e) => setSpacing(e.target.value as any)}
+                >
+                  <option value="compact">Compact (No A4 Box)</option>
+                  <option value="normal">Standard (Normal A4)</option>
+                  <option value="spacious">Spacious (Large A4)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-header-row" style={{ marginTop: '24px' }}>
+            <h2 className="form-title">Resume Content</h2>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button type="button" className="btn-sec" style={{ padding: '6px 10px', fontSize: '0.72rem' }} onClick={handleLoadSample}>
                 Sample
@@ -317,8 +533,8 @@ export default function App() {
           </div>
 
           <div className="actions-row">
-            <button type="button" className="btn-primary" onClick={handleDownloadPDF}>
-              🖨 Download PDF
+            <button type="button" className="btn-primary" onClick={() => window.print()}>
+              🖨 Download Resume PDF
             </button>
           </div>
 
@@ -612,7 +828,7 @@ export default function App() {
         {/* RIGHT COLUMN: LIVE RESUME PREVIEW PANEL */}
         <section className="preview-panel">
           <div className="resume-preview-wrapper">
-            <div className="resume-paper" id="resume-print-area">
+            <div className={`resume-paper theme-${fontTheme} spacing-${spacing}`} id="resume-print-area">
               
               {/* Resume Header */}
               <div className="res-header">
@@ -620,9 +836,7 @@ export default function App() {
                 <div className="res-title">{state.jobTitle || 'Full Stack Developer'}</div>
                 <div className="res-contact">
                   {state.email && (
-                    <>
-                      <a href={`mailto:${state.email}`}>{state.email}</a>
-                    </>
+                    <a href={`mailto:${state.email}`}>{state.email}</a>
                   )}
                   {state.phone && (
                     <>

@@ -561,3 +561,157 @@ footer {
     print-color-adjust: exact;
   }
 }
+
+/* ── LAYOUT THEMES & SPACING ── */
+.theme-serif {
+  font-family: 'Georgia', 'Times New Roman', Times, serif !important;
+}
+.theme-sans {
+  font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+.theme-mono {
+  font-family: 'Courier New', Courier, monospace !important;
+}
+
+.spacing-compact {
+  padding: 24px !important;
+  min-height: 0 !important;
+}
+.spacing-compact .res-section {
+  margin-top: 10px !important;
+}
+.spacing-compact .res-item {
+  margin-bottom: 6px !important;
+}
+
+.spacing-normal {
+  padding: 48px !important;
+  min-height: 1123px !important;
+}
+
+.spacing-spacious {
+  padding: 60px !important;
+  min-height: 1200px !important;
+}
+.spacing-spacious .res-section {
+  margin-top: 24px !important;
+}
+
+/* ── ATS SCORE WIDGET ── */
+.ats-widget {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.ats-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ats-score-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-bright);
+}
+
+.ats-score-badge {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--bg);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.ats-bar-container {
+  height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.ats-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.ats-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.ats-suggestions::-webkit-scrollbar {
+  width: 4px;
+}
+.ats-suggestions::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.ats-item {
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.ats-item.critical {
+  color: #EF4444;
+}
+
+/* Multiple Profiles Variant switcher */
+.profile-switcher {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.profile-select-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.profile-select-row select {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-bright);
+  padding: 8px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.82rem;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-actions input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-bright);
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  outline: none;
+}
+
