@@ -67,7 +67,7 @@ const DEFAULT_STATE: ResumeState = {
 const SAMPLE_DATA: ResumeState = {
   fullName: 'Phulkeshwar Mahto',
   jobTitle: 'Full Stack Engineer',
-  email: 'phulkeshwarmahto@gmail.com',
+  email: 'phulkeshwar.e@gmail.com',
   phone: '+91-9988776655',
   location: 'Ranchi, Jharkhand',
   linkedin: 'linkedin.com/in/phulkeshwarmahto',
@@ -480,7 +480,7 @@ export default function App() {
         </div>
         <div className="author-chip">
           By <strong>Phulkeshwar Mahto</strong> &nbsp;·&nbsp;
-          <a href="mailto:phulkeshwarmahto@gmail.com">phulkeshwarmahto@gmail.com</a>
+          <a href="mailto:phulkeshwar.e@gmail.com">phulkeshwar.e@gmail.com</a>
         </div>
       </header>
 
@@ -1081,7 +1081,7 @@ export default function App() {
       <footer>
         <p className="footer-author">
           Built by <strong>Phulkeshwar Mahto</strong> &nbsp;·&nbsp;
-          <a href="mailto:phulkeshwarmahto@gmail.com">phulkeshwarmahto@gmail.com</a>
+          <a href="mailto:phulkeshwar.e@gmail.com">phulkeshwar.e@gmail.com</a>
           &nbsp;·&nbsp; B.Tech CSE · NIAMT Ranchi
         </p>
         <a className="dh-btn" href="https://digitalheroesco.com" target="_blank" rel="noopener noreferrer">
