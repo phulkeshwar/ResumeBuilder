@@ -270,6 +270,19 @@ export default function App() {
     localStorage.setItem('resume_active_profile_name', name);
   };
 
+  const handleDownloadJson = () => {
+    const textToDownload = JSON.stringify(state, null, 2);
+    const blob = new Blob([textToDownload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${state.fullName ? state.fullName.replace(/\s+/g, '_') : 'resume'}_data.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // General field handlers
   const handleFieldChange = (key: keyof ResumeState, value: string) => {
     setState((prev) => ({ ...prev, [key]: value }));
@@ -593,9 +606,12 @@ export default function App() {
             </div>
           </div>
 
-          <div className="actions-row">
-            <button type="button" className="btn-primary" onClick={() => window.print()}>
+          <div className="actions-row" style={{ display: 'flex', gap: '8px' }}>
+            <button type="button" className="btn-primary" onClick={() => window.print()} style={{ flex: 1 }}>
               🖨 Download Resume PDF
+            </button>
+            <button type="button" className="btn-sec" onClick={handleDownloadJson} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>💾</span> Export Backup
             </button>
           </div>
 
