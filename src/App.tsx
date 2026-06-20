@@ -122,6 +122,67 @@ export default function App() {
   // Local state copy representing the active form inputs
   const [state, setState] = useState<ResumeState>(DEFAULT_STATE);
 
+  // FAQ Active Accordion
+  const [faqActive, setFaqActive] = useState<number | null>(null);
+  const toggleFaq = (index: number) => {
+    setFaqActive(faqActive === index ? null : index);
+  };
+
+  // Dynamic FAQ JSON-LD Injection for deep SEO
+  useEffect(() => {
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How can I make my resume ATS-friendly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "To make your resume ATS (Applicant Tracking System) friendly, use a clean single-column layout, standard headings, avoid tables or graphic elements, write list-based bullet points, and include relevant technical keywords matching the job description."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the recommended resume length?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For students and professionals with under 5 years of experience, a single-page (1 page) resume is highly recommended. Ensure spacing and margins are adjusted to fit your profile neatly without crowding."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I create multiple resume variants?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Customizing your resume for different targeted roles (e.g. Frontend vs Backend) increases your callback rates. Use the built-in profile variants manager to store and switch between different targeted profiles."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the ATS score checker work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our built-in ATS checker analyzes the structured components of your resume (contact information, job summary length, technical skill tag counts, bullet points formatting) and evaluates conformity to industry best practices."
+          }
+        }
+      ]
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'faq-jsonld';
+    script.innerHTML = JSON.stringify(faqSchema);
+    document.head.appendChild(script);
+
+    return () => {
+      const existingScript = document.getElementById('faq-jsonld');
+      if (existingScript) {
+        existingScript.remove();
+      }
+    };
+  }, []);
+
   // 2. STYLING VARIANTS STATE
   const [fontTheme, setFontTheme] = useState<'serif' | 'sans' | 'mono'>('serif');
   const [spacing, setSpacing] = useState<'compact' | 'normal' | 'spacious'>('normal');
@@ -972,6 +1033,48 @@ export default function App() {
             </div>
           </div>
         </section>
+      </div>
+
+      {/* FAQ SECTION */}
+      <div className="faq-section-container">
+        <div className="card faq-card">
+          <div className="card-title">❓ Frequently Asked Questions (FAQ)</div>
+          <div className="faq-list">
+            {[
+              {
+                q: "How can I make my resume ATS-friendly?",
+                a: "To make your resume ATS (Applicant Tracking System) friendly, use a clean single-column layout, standard headings, avoid tables or graphic elements, write list-based bullet points, and include relevant technical keywords matching the job description."
+              },
+              {
+                q: "What is the recommended resume length?",
+                a: "For students and professionals with under 5 years of experience, a single-page (1 page) resume is highly recommended. Ensure spacing and margins are adjusted to fit your profile neatly without crowding."
+              },
+              {
+                q: "Should I create multiple resume variants?",
+                a: "Yes. Customizing your resume for different targeted roles (e.g. Frontend vs Backend) increases your callback rates. Use the built-in profile variants manager to store and switch between different targeted profiles."
+              },
+              {
+                q: "How does the ATS score checker work?",
+                a: "Our built-in ATS checker analyzes the structured components of your resume (contact information, job summary length, technical skill tag counts, bullet points formatting) and evaluates conformity to industry best practices."
+              }
+            ].map((item, index) => (
+              <div key={index} className={`faq-item ${faqActive === index ? 'active' : ''}`}>
+                <button
+                  type="button"
+                  className="faq-question"
+                  onClick={() => toggleFaq(index)}
+                  aria-expanded={faqActive === index}
+                >
+                  <span>{item.q}</span>
+                  <span className="faq-icon">{faqActive === index ? '−' : '+'}</span>
+                </button>
+                <div className="faq-answer">
+                  <p>{item.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* FOOTER */}
